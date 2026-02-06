@@ -1,0 +1,40 @@
+{
+  "name": "github-ai-repo-finder",
+  "version": "1.0.0",
+  "description": "AI-powered GitHub repository finder",
+  "main": "dist/server/index.js",
+  "scripts": {
+    "dev:server": "nodemon --exec ts-node -P tsconfig.server.json src/server/index.ts",
+    "dev:client": "vite",
+    "build:server": "tsc -p tsconfig.server.json",
+    "build:client": "tsc -p tsconfig.client.json && vite build",
+    "build": "npm run build:server && npm run build:client",
+    "start": "node dist/server/index.js",
+    "test": "jest",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json,css,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,json,css,md}\""
+  },
+  "keywords": [
+    "github",
+    "ai",
+    "repository",
+    "finder"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.54.0",
+    "@typescript-eslint/parser": "^8.54.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "nodemon": "^3.0.2",
+    "prettier": "^3.8.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
