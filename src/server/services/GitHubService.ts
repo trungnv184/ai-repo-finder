@@ -7,6 +7,7 @@ import type { Repository, SearchOptions, SearchResult } from '../../shared/types
  * These topics are used to filter repositories related to AI/ML
  */
 const DEFAULT_AI_TOPICS = [
+  'ai',
   'artificial-intelligence',
   'machine-learning',
   'deep-learning',

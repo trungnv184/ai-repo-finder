@@ -224,7 +224,7 @@ describe('GitHubService', () => {
 
       const calledQuery = (mockRepos.mock.calls[0]![0] as any).q as string;
       expect(calledQuery).toContain('neural');
-      expect(calledQuery).toContain('topic:artificial-intelligence');
+      expect(calledQuery).toContain('topic:ai');
     });
 
     it('should use custom topics when provided', async () => {

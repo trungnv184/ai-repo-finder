@@ -8,6 +8,8 @@ interface FetchReposParams {
   perPage?: number;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+
 export async function fetchRepos(params: FetchReposParams): Promise<ApiResponse<SearchResult>> {
   const searchParams = new URLSearchParams();
 
@@ -17,7 +19,7 @@ export async function fetchRepos(params: FetchReposParams): Promise<ApiResponse<
   if (params.page) searchParams.set('page', params.page.toString());
   if (params.perPage) searchParams.set('perPage', params.perPage.toString());
 
-  const url = `/api/repos?${searchParams.toString()}`;
+  const url = `${API_BASE_URL}/api/repos?${searchParams.toString()}`;
   const response = await fetch(url);
   const data: ApiResponse<SearchResult> = await response.json();
   return data;
