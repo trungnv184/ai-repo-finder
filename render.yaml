@@ -1,9 +1,22 @@
+# Render.com Blueprint
+#
+# IMPORTANT: If you created the Render service MANUALLY (not via "New Blueprint Instance"),
+# then this file is IGNORED. You must update the Build Command and Start Command
+# directly in the Render Dashboard under your service's Settings tab.
+#
+# Copy-paste these into the Render Dashboard:
+#   Build Command: npm ci && npm run build:server && echo '--- Build output ---' && ls -la dist/server/
+#   Start Command: node dist/server/index.js
+#
+# Also ensure "Clear build cache & deploy" is used for the first deploy after this fix,
+# since Render may have cached the old (broken) node_modules.
+
 services:
   - type: web
     name: ai-repo-finder-api
     runtime: node
     plan: free
-    buildCommand: npm ci && npm run build:server
+    buildCommand: npm ci && npm run build:server && echo '--- Build output ---' && ls -la dist/server/
     startCommand: node dist/server/index.js
     envVars:
       - key: NODE_ENV
