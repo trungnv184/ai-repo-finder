@@ -41,7 +41,7 @@ export class CacheService implements ICacheService {
     }
 
     // Check if the entry has expired
-    if (Date.now() > entry.expiresAt) {
+    if (Date.now() >= entry.expiresAt) {
       // Remove expired entry
       this.cache.delete(key);
       return null;

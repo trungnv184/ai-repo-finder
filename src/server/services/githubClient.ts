@@ -15,36 +15,43 @@ export interface RateLimitInfo {
   used: number;
 }
 
+let _octokit: Octokit | null = null;
+
 /**
- * Configured Octokit instance for GitHub API access
- * Initialized with authentication token from environment variable
+ * Configured Octokit instance for GitHub API access (lazy-initialized)
+ * Use this instance for all GitHub API operations
  *
  * @throws {Error} If GITHUB_TOKEN environment variable is not set
  */
-const createOctokitInstance = (): Octokit => {
-  const githubToken = process.env.GITHUB_TOKEN;
+export const getOctokit = (): Octokit => {
+  if (!_octokit) {
+    const githubToken = process.env.GITHUB_TOKEN;
 
-  if (!githubToken) {
-    throw new Error(
-      'GITHUB_TOKEN environment variable is required for GitHub API access'
-    );
+    if (!githubToken) {
+      throw new Error(
+        'GITHUB_TOKEN environment variable is required for GitHub API access'
+      );
+    }
+
+    _octokit = new Octokit({
+      auth: githubToken,
+      userAgent: 'github-ai-repo-finder/1.0.0',
+      request: {
+        timeout: 10000, // 10 seconds
+      },
+    });
   }
-
-  return new Octokit({
-    auth: githubToken,
-    userAgent: 'github-ai-repo-finder/1.0.0',
-    // Optional: Add request timeout and retry configuration
-    request: {
-      timeout: 10000, // 10 seconds
-    },
-  });
+  return _octokit;
 };
 
 /**
- * Configured GitHub API client instance
- * Use this instance for all GitHub API operations
+ * Backward-compatible export - lazily creates octokit on first property access
  */
-export const octokit = createOctokitInstance();
+export const octokit = new Proxy({} as Octokit, {
+  get(_target, prop) {
+    return (getOctokit() as unknown as Record<string | symbol, unknown>)[prop];
+  },
+});
 
 /**
  * Retrieves current rate limit information from GitHub API
@@ -53,7 +60,8 @@ export const octokit = createOctokitInstance();
  * @throws {Error} If the API request fails
  */
 export async function getRateLimitInfo(): Promise<RateLimitInfo> {
-  const { data } = await octokit.rest.rateLimit.get();
+  const client = getOctokit();
+  const { data } = await client.rest.rateLimit.get();
   const { limit, remaining, reset, used } = data.rate;
 
   return {

@@ -6,12 +6,12 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",
     "outDir": "./dist/client",
-    "rootDir": "./src/client",
+    "rootDir": "./src",
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "noEmit": true,
     "isolatedModules": true
   },
-  "include": ["src/client/**/*"],
+  "include": ["src/client/**/*", "src/shared/**/*"],
   "exclude": ["node_modules", "dist"]
 }

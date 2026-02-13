@@ -1,0 +1,21 @@
+/* Tablet: < 1024px */
+@media (max-width: 1024px) {
+  :root {
+    --max-width: 100%;
+  }
+
+  .container {
+    padding: 0 16px;
+  }
+}
+
+/* Mobile: < 768px */
+@media (max-width: 768px) {
+  html {
+    font-size: 15px;
+  }
+
+  .container {
+    padding: 0 12px;
+  }
+}
