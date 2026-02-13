@@ -61,8 +61,9 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 
 // Start server only when run directly (not imported for testing)
 if (require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on http://0.0.0.0:${PORT}`);
+    console.log(`GITHUB_TOKEN: ${process.env.GITHUB_TOKEN ? 'set' : 'NOT SET'}`);
   });
 }
 
