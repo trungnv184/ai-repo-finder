@@ -3,7 +3,7 @@ services:
     name: ai-repo-finder-api
     runtime: node
     plan: free
-    buildCommand: npm ci --include=dev && npm run build:server
+    buildCommand: NODE_ENV=development npm ci && npm run build:server
     startCommand: node dist/server/index.js
     envVars:
       - key: NODE_ENV
