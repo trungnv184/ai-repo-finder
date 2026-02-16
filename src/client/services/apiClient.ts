@@ -8,7 +8,7 @@ interface FetchReposParams {
   perPage?: number;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
 
 export async function fetchRepos(params: FetchReposParams): Promise<ApiResponse<SearchResult>> {
   const searchParams = new URLSearchParams();
