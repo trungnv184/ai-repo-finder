@@ -9,6 +9,9 @@ jest.mock('../../../src/server/services/githubClient', () => ({
       search: {
         repos: jest.fn(),
       },
+      users: {
+        getByUsername: jest.fn(),
+      },
     },
   },
 }));
@@ -17,6 +20,7 @@ jest.mock('../../../src/server/services/githubClient', () => ({
 import { octokit } from '../../../src/server/services/githubClient';
 
 const mockRepos = octokit.rest.search.repos as jest.MockedFunction<typeof octokit.rest.search.repos>;
+const mockGetByUsername = (octokit.rest.users as any).getByUsername as jest.MockedFunction<any>;
 
 /**
  * Creates a mock GitHub API response item
@@ -93,6 +97,8 @@ describe('GitHubService', () => {
     service = new GitHubService(cacheService);
     jest.clearAllMocks();
     jest.useFakeTimers();
+    // Default mock for user profile enrichment
+    mockGetByUsername.mockResolvedValue({ data: { location: null } });
   });
 
   afterEach(() => {
@@ -115,6 +121,7 @@ describe('GitHubService', () => {
         owner: {
           login: 'owner',
           avatarUrl: 'https://avatars.example.com/owner',
+          location: null,
         },
         description: 'A test repository',
         url: 'https://github.com/owner/test-repo',
@@ -315,7 +322,11 @@ describe('GitHubService', () => {
 
       expect(result.fromCache).toBe(false);
       expect(mockRepos).toHaveBeenCalledTimes(1);
-      expect(setSpy).toHaveBeenCalledTimes(1);
+      // set is called for: user profile cache + search result cache
+      expect(setSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/^search:/),
+        expect.objectContaining({ repositories: expect.any(Array) })
+      );
     });
 
     it('should cache API results after successful fetch', async () => {

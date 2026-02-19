@@ -3,7 +3,7 @@ import type { Repository } from './repository';
 /**
  * Sort field options for repository search
  */
-export type SortField = 'stars' | 'forks' | 'updated' | 'name';
+export type SortField = 'stars' | 'forks' | 'updated' | 'name' | 'location';
 
 /**
  * Sort order options
@@ -16,6 +16,7 @@ export type SortOrder = 'asc' | 'desc';
 export interface SearchOptions {
   query?: string;              // Search keyword
   topics?: string[];           // AI-related topics to filter
+  location?: string;           // Filter by owner location
   sortField: SortField;
   sortOrder: SortOrder;
   page: number;

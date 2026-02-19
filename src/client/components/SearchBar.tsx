@@ -57,12 +57,13 @@ const styles: Record<string, React.CSSProperties> = {
   input: {
     width: '100%',
     padding: '10px 12px 10px 36px',
-    backgroundColor: 'var(--bg-primary)',
+    backgroundColor: 'var(--bg-tertiary)',
     border: '1px solid var(--border-color)',
     borderRadius: 'var(--radius-md)',
     color: 'var(--text-primary)',
     fontSize: '0.9375rem',
     outline: 'none',
+    transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
   },
   count: {
     fontSize: '0.875rem',

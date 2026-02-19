@@ -48,16 +48,19 @@ const styles: Record<string, React.CSSProperties> = {
   },
   button: {
     padding: '8px 16px',
-    backgroundColor: 'var(--bg-tertiary)',
+    backgroundColor: 'var(--bg-secondary)',
     border: '1px solid var(--border-color)',
     borderRadius: 'var(--radius-md)',
     color: 'var(--text-primary)',
     fontSize: '0.875rem',
     cursor: 'pointer',
+    transition: 'background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease',
+    boxShadow: 'var(--shadow-sm)',
   },
   disabled: {
     opacity: 0.4,
     cursor: 'not-allowed',
+    boxShadow: 'none',
   },
   info: {
     fontSize: '0.875rem',

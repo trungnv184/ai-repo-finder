@@ -4,6 +4,7 @@
 export interface Owner {
   login: string;
   avatarUrl: string;
+  location?: string | null;
 }
 
 /**

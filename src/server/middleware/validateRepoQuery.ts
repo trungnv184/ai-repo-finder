@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import type { SortField, SortOrder } from '../../shared/types';
 
-const VALID_SORT_FIELDS: SortField[] = ['stars', 'forks', 'updated', 'name'];
+const VALID_SORT_FIELDS: SortField[] = ['stars', 'forks', 'updated', 'name', 'location'];
 const VALID_SORT_ORDERS: SortOrder[] = ['asc', 'desc'];
 
 /**
@@ -96,6 +96,12 @@ export function validateRepoQuery(req: Request, res: Response, next: NextFunctio
   const query = req.query.q as string | undefined;
   if (query) {
     req.query.q = sanitizeQuery(query);
+  }
+
+  // Sanitize location string
+  const location = req.query.location as string | undefined;
+  if (location) {
+    req.query.location = sanitizeQuery(location);
   }
 
   next();

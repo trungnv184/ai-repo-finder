@@ -6,7 +6,34 @@ interface RepoCardProps {
   repo: Repository;
 }
 
+const LANGUAGE_COLORS: Record<string, string> = {
+  Python: '#3572A5',
+  JavaScript: '#f1e05a',
+  TypeScript: '#3178c6',
+  Jupyter: '#DA5B0B',
+  'Jupyter Notebook': '#DA5B0B',
+  Rust: '#dea584',
+  Go: '#00ADD8',
+  Java: '#b07219',
+  'C++': '#f34b7d',
+  C: '#555555',
+  Ruby: '#701516',
+  Swift: '#F05138',
+  Kotlin: '#A97BFF',
+  Scala: '#c22d40',
+  R: '#198CE7',
+  Julia: '#a270ba',
+  Dart: '#00B4AB',
+  Shell: '#89e051',
+  PHP: '#4F5D95',
+  Lua: '#000080',
+  Zig: '#ec915c',
+  Elixir: '#6e4a7e',
+};
+
 export function RepoCard({ repo }: RepoCardProps) {
+  const langColor = repo.language ? (LANGUAGE_COLORS[repo.language] || '#94a3b8') : undefined;
+
   return (
     <div style={styles.card}>
       <div style={styles.header}>
@@ -24,7 +51,26 @@ export function RepoCard({ repo }: RepoCardProps) {
           >
             {repo.owner.login} / <strong>{repo.name}</strong>
           </a>
-          {repo.language && <span style={styles.language}>{repo.language}</span>}
+          {repo.owner.location && (
+            <span style={styles.location} title={repo.owner.location}>
+              <svg style={styles.locationIcon} viewBox="0 0 16 16" fill="currentColor">
+                <path d="M12.596 11.596a6.5 6.5 0 0 1-9.192-9.192 6.5 6.5 0 0 1 9.192 9.192ZM8 1.5A6.5 6.5 0 0 0 1.5 8 6.5 6.5 0 0 0 8 14.5 6.5 6.5 0 0 0 14.5 8 6.5 6.5 0 0 0 8 1.5Z" />
+                <path d="M8 3a.75.75 0 0 1 .75.75v.5a4.5 4.5 0 0 1 3 3h.5a.75.75 0 0 1 0 1.5h-.5a4.5 4.5 0 0 1-3 3v.5a.75.75 0 0 1-1.5 0v-.5a4.5 4.5 0 0 1-3-3h-.5a.75.75 0 0 1 0-1.5h.5a4.5 4.5 0 0 1 3-3v-.5A.75.75 0 0 1 8 3Zm0 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" />
+              </svg>
+              {repo.owner.location}
+            </span>
+          )}
+          {repo.language && (
+            <span style={styles.language}>
+              <span
+                style={{
+                  ...styles.languageDot,
+                  backgroundColor: langColor,
+                }}
+              />
+              {repo.language}
+            </span>
+          )}
         </div>
       </div>
 
@@ -43,8 +89,8 @@ export function RepoCard({ repo }: RepoCardProps) {
       )}
 
       <div style={styles.stats}>
-        <span style={styles.stat} title="Stars">
-          <svg style={styles.statIcon} viewBox="0 0 16 16" fill="currentColor">
+        <span style={styles.starStat} title="Stars">
+          <svg style={styles.starIcon} viewBox="0 0 16 16" fill="currentColor">
             <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" />
           </svg>
           {formatNumber(repo.stars)}
@@ -81,6 +127,8 @@ const styles: Record<string, React.CSSProperties> = {
     flexDirection: 'column',
     gap: '12px',
     animation: 'fadeIn 0.3s ease',
+    boxShadow: 'var(--shadow-sm)',
+    transition: 'box-shadow 0.2s ease, border-color 0.2s ease',
   },
   header: {
     display: 'flex',
@@ -91,6 +139,7 @@ const styles: Record<string, React.CSSProperties> = {
     width: '32px',
     height: '32px',
     borderRadius: '50%',
+    border: '1px solid var(--border-color)',
   },
   titleGroup: {
     display: 'flex',
@@ -106,12 +155,33 @@ const styles: Record<string, React.CSSProperties> = {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
   },
+  location: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '3px',
+    fontSize: '0.75rem',
+    color: 'var(--text-muted)',
+  },
+  locationIcon: {
+    width: '12px',
+    height: '12px',
+    flexShrink: 0,
+  },
   language: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '5px',
     fontSize: '0.75rem',
     padding: '2px 8px',
     backgroundColor: 'var(--bg-tertiary)',
     borderRadius: '12px',
     color: 'var(--text-secondary)',
+  },
+  languageDot: {
+    width: '8px',
+    height: '8px',
+    borderRadius: '50%',
+    flexShrink: 0,
   },
   description: {
     fontSize: '0.9rem',
@@ -130,17 +200,30 @@ const styles: Record<string, React.CSSProperties> = {
   topic: {
     fontSize: '0.75rem',
     padding: '2px 10px',
-    backgroundColor: 'rgba(56, 139, 253, 0.15)',
+    backgroundColor: 'rgba(59, 130, 246, 0.08)',
     color: 'var(--accent)',
     borderRadius: '12px',
+    border: '1px solid rgba(59, 130, 246, 0.15)',
   },
   stats: {
     display: 'flex',
     alignItems: 'center',
     gap: '16px',
     flexWrap: 'wrap' as const,
-    paddingTop: '4px',
+    paddingTop: '8px',
     borderTop: '1px solid var(--border-color)',
+  },
+  starStat: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    fontSize: '0.85rem',
+    color: 'var(--star-color)',
+    fontWeight: 600,
+  },
+  starIcon: {
+    width: '14px',
+    height: '14px',
   },
   stat: {
     display: 'flex',

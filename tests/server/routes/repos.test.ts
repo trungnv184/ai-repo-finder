@@ -174,6 +174,7 @@ describe('GET /api/repos', () => {
         sortOrder: 'desc',
         page: 1,
         perPage: 20,
+        location: '',
       })
     );
   });

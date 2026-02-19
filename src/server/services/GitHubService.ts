@@ -25,6 +25,12 @@ const MAX_RETRIES = 3;
 /** Base delay in milliseconds for exponential backoff (1s, 2s, 4s) */
 const BASE_RETRY_DELAY_MS = 1000;
 
+/** Maximum unique owners to fetch profiles for per page (to avoid rate limiting) */
+const MAX_OWNER_ENRICHMENT = 10;
+
+/** TTL for cached user profiles (24 hours in milliseconds) */
+const USER_PROFILE_TTL_MS = 86400000;
+
 /**
  * Service for fetching AI repositories from GitHub
  * Provides business logic for GitHub data fetching with caching, retry, and error handling
@@ -96,11 +102,37 @@ export class GitHubService {
         }
 
         // Transform GitHub API response to our Repository format
-        const repositories = this.transformRepositories(response.data.items);
+        let repositories = this.transformRepositories(response.data.items);
+
+        // Enrich with owner locations
+        repositories = await this.enrichWithOwnerLocations(repositories);
+
+        // Filter by location if specified
+        if (options.location && options.location.trim()) {
+          const locationFilter = options.location.trim().toLowerCase();
+          repositories = repositories.filter((repo) => {
+            if (!repo.owner.location) return false;
+            return repo.owner.location.toLowerCase().includes(locationFilter);
+          });
+        }
+
+        // Sort by location client-side if requested
+        if (options.sortField === 'location') {
+          repositories.sort((a, b) => {
+            const locA = a.owner.location || '';
+            const locB = b.owner.location || '';
+            const cmp = locA.localeCompare(locB);
+            return options.sortOrder === 'asc' ? cmp : -cmp;
+          });
+        }
 
         // Calculate pagination metadata
-        const totalCount = response.data.total_count;
-        const totalPages = Math.ceil(totalCount / options.perPage);
+        const totalCount = options.location
+          ? repositories.length
+          : response.data.total_count;
+        const totalPages = options.location
+          ? Math.max(1, Math.ceil(totalCount / options.perPage))
+          : Math.ceil(response.data.total_count / options.perPage);
 
         // Build search result
         const searchResult: SearchResult = {
@@ -228,7 +260,7 @@ export class GitHubService {
    * Maps our sort field to GitHub API sort parameter
    */
   private mapSortField(sortField: string): 'stars' | 'forks' | 'updated' | undefined {
-    if (sortField === 'name') {
+    if (sortField === 'name' || sortField === 'location') {
       return undefined;
     }
     return sortField as 'stars' | 'forks' | 'updated';
@@ -239,7 +271,55 @@ export class GitHubService {
    */
   private generateCacheKey(options: SearchOptions): string {
     const topicsKey = (options.topics || DEFAULT_AI_TOPICS).sort().join(',');
-    return `search:${options.query || ''}:${topicsKey}:${options.sortField}:${options.sortOrder}:${options.page}:${options.perPage}`;
+    const locationKey = options.location || '';
+    return `search:${options.query || ''}:${topicsKey}:${options.sortField}:${options.sortOrder}:${options.page}:${options.perPage}:${locationKey}`;
+  }
+
+  /**
+   * Enriches repositories with owner location data by batch-fetching user profiles.
+   * Limits to MAX_OWNER_ENRICHMENT unique owners per call to avoid rate limiting.
+   * Caches individual user profiles with a 24-hour TTL.
+   */
+  private async enrichWithOwnerLocations(repos: Repository[]): Promise<Repository[]> {
+    // Collect unique owner logins
+    const uniqueLogins = [...new Set(repos.map((r) => r.owner.login))];
+    const loginsToFetch = uniqueLogins.slice(0, MAX_OWNER_ENRICHMENT);
+
+    // Fetch user profiles in parallel, using cache where possible
+    const locationMap = new Map<string, string | null>();
+
+    await Promise.all(
+      loginsToFetch.map(async (login) => {
+        const cacheKey = `user:${login}`;
+
+        // Cache stores { location: string | null } wrapper to distinguish
+        // "not in cache" (returns null) from "cached with null location"
+        const cachedWrapper = this.cacheService.get<{ location: string | null }>(cacheKey);
+        if (cachedWrapper !== null) {
+          locationMap.set(login, cachedWrapper.location);
+          return;
+        }
+
+        try {
+          const response = await octokit.rest.users.getByUsername({ username: login });
+          const location = response.data.location || null;
+          locationMap.set(login, location);
+          this.cacheService.set(cacheKey, { location }, USER_PROFILE_TTL_MS);
+        } catch {
+          // If fetch fails, leave location as null
+          locationMap.set(login, null);
+        }
+      })
+    );
+
+    // Attach location to each repo's owner
+    return repos.map((repo) => ({
+      ...repo,
+      owner: {
+        ...repo.owner,
+        location: locationMap.get(repo.owner.login) ?? null,
+      },
+    }));
   }
 
   /**

@@ -6,6 +6,7 @@ interface FetchReposParams {
   sortOrder?: string;
   page?: number;
   perPage?: number;
+  location?: string;
 }
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
@@ -18,6 +19,7 @@ export async function fetchRepos(params: FetchReposParams): Promise<ApiResponse<
   if (params.sortOrder) searchParams.set('sortOrder', params.sortOrder);
   if (params.page) searchParams.set('page', params.page.toString());
   if (params.perPage) searchParams.set('perPage', params.perPage.toString());
+  if (params.location) searchParams.set('location', params.location);
 
   const url = `${API_BASE_URL}/api/repos?${searchParams.toString()}`;
   const response = await fetch(url);

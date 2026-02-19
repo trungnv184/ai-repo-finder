@@ -42,11 +42,13 @@ const styles: Record<string, React.CSSProperties> = {
   retryBtn: {
     marginTop: '4px',
     padding: '8px 20px',
-    backgroundColor: 'var(--bg-tertiary)',
+    backgroundColor: 'var(--bg-secondary)',
     border: '1px solid var(--border-color)',
     borderRadius: 'var(--radius-md)',
     color: 'var(--text-primary)',
     fontSize: '0.875rem',
     cursor: 'pointer',
+    transition: 'background-color 0.2s ease, border-color 0.2s ease',
+    boxShadow: 'var(--shadow-sm)',
   },
 };

@@ -23,6 +23,7 @@ router.get('/', validateRepoQuery, async (req: Request, res: Response) => {
       sortOrder: (req.query.order as SortOrder) || 'desc',
       page: parseInt(req.query.page as string, 10) || 1,
       perPage: parseInt(req.query.per_page as string, 10) || 20,
+      location: (req.query.location as string) || '',
     };
 
     const result = await githubService.searchRepositories(options);

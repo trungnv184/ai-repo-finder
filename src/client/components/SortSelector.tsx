@@ -12,6 +12,7 @@ const SORT_OPTIONS: { value: SortField; label: string }[] = [
   { value: 'forks', label: 'Forks' },
   { value: 'updated', label: 'Recently Updated' },
   { value: 'name', label: 'Name' },
+  { value: 'location', label: 'Country' },
 ];
 
 export function SortSelector({
@@ -63,13 +64,14 @@ const styles: Record<string, React.CSSProperties> = {
   },
   select: {
     padding: '8px 12px',
-    backgroundColor: 'var(--bg-tertiary)',
+    backgroundColor: 'var(--bg-secondary)',
     border: '1px solid var(--border-color)',
     borderRadius: 'var(--radius-md)',
     color: 'var(--text-primary)',
     fontSize: '0.875rem',
     outline: 'none',
     cursor: 'pointer',
+    transition: 'border-color 0.2s ease',
   },
   toggleBtn: {
     display: 'flex',
@@ -77,10 +79,11 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: 'center',
     width: '36px',
     height: '36px',
-    backgroundColor: 'var(--bg-tertiary)',
+    backgroundColor: 'var(--bg-secondary)',
     border: '1px solid var(--border-color)',
     borderRadius: 'var(--radius-md)',
     color: 'var(--text-primary)',
     fontSize: '1rem',
+    transition: 'background-color 0.2s ease, border-color 0.2s ease',
   },
 };

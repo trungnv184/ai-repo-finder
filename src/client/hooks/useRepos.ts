@@ -8,6 +8,7 @@ interface UseReposOptions {
   sortOrder?: SortOrder;
   page?: number;
   perPage?: number;
+  location?: string;
 }
 
 interface Pagination {
@@ -27,7 +28,7 @@ interface UseReposResult {
 }
 
 export function useRepos(options: UseReposOptions = {}): UseReposResult {
-  const { query, sortField = 'stars', sortOrder = 'desc', page = 1, perPage = 20 } = options;
+  const { query, sortField = 'stars', sortOrder = 'desc', page = 1, perPage = 20, location } = options;
 
   const [repos, setRepos] = useState<Repository[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +51,7 @@ export function useRepos(options: UseReposOptions = {}): UseReposResult {
     setLoading(true);
     setError(null);
 
-    fetchRepos({ query, sortField, sortOrder, page, perPage })
+    fetchRepos({ query, sortField, sortOrder, page, perPage, location })
       .then((response) => {
         if (cancelled) return;
         if (response.success && response.data) {
@@ -78,7 +79,7 @@ export function useRepos(options: UseReposOptions = {}): UseReposResult {
     return () => {
       cancelled = true;
     };
-  }, [query, sortField, sortOrder, page, perPage, fetchCount]);
+  }, [query, sortField, sortOrder, page, perPage, location, fetchCount]);
 
   return { repos, loading, error, pagination, lastFetched, fromCache, refetch };
 }

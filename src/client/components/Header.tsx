@@ -5,17 +5,78 @@ interface HeaderProps {
   fromCache?: boolean;
 }
 
+function Logo() {
+  return (
+    <svg
+      style={styles.logo}
+      viewBox="0 0 128 128"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* Magnifying glass body */}
+      <circle
+        cx="52"
+        cy="52"
+        r="36"
+        stroke="#3b82f6"
+        strokeWidth="6"
+        fill="#eff6ff"
+      />
+      {/* Glass highlight */}
+      <circle
+        cx="52"
+        cy="52"
+        r="30"
+        stroke="#93c5fd"
+        strokeWidth="1.5"
+        fill="none"
+      />
+      {/* Handle */}
+      <line
+        x1="78"
+        y1="78"
+        x2="108"
+        y2="108"
+        stroke="#3b82f6"
+        strokeWidth="8"
+        strokeLinecap="round"
+      />
+      {/* Neural network nodes */}
+      <circle cx="40" cy="38" r="4" fill="#3b82f6" />
+      <circle cx="64" cy="38" r="4" fill="#3b82f6" />
+      <circle cx="52" cy="52" r="5" fill="#2563eb" />
+      <circle cx="36" cy="58" r="3.5" fill="#60a5fa" />
+      <circle cx="68" cy="58" r="3.5" fill="#60a5fa" />
+      <circle cx="44" cy="68" r="3" fill="#93c5fd" />
+      <circle cx="60" cy="68" r="3" fill="#93c5fd" />
+      {/* Neural connections */}
+      <line x1="40" y1="38" x2="52" y2="52" stroke="#93c5fd" strokeWidth="1.5" />
+      <line x1="64" y1="38" x2="52" y2="52" stroke="#93c5fd" strokeWidth="1.5" />
+      <line x1="52" y1="52" x2="36" y2="58" stroke="#93c5fd" strokeWidth="1.5" />
+      <line x1="52" y1="52" x2="68" y2="58" stroke="#93c5fd" strokeWidth="1.5" />
+      <line x1="36" y1="58" x2="44" y2="68" stroke="#bfdbfe" strokeWidth="1" />
+      <line x1="68" y1="58" x2="60" y2="68" stroke="#bfdbfe" strokeWidth="1" />
+      <line x1="40" y1="38" x2="36" y2="58" stroke="#bfdbfe" strokeWidth="1" />
+      <line x1="64" y1="38" x2="68" y2="58" stroke="#bfdbfe" strokeWidth="1" />
+      <line x1="44" y1="68" x2="60" y2="68" stroke="#bfdbfe" strokeWidth="1" />
+    </svg>
+  );
+}
+
 export function Header({ lastFetched, fromCache }: HeaderProps) {
   return (
     <header style={styles.header}>
       <div style={styles.container}>
         <div style={styles.titleRow}>
-          <h1 style={styles.title}>
-            <svg style={styles.logo} viewBox="0 0 16 16" fill="currentColor">
-              <path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z" />
-            </svg>
-            AI Repo Finder
-          </h1>
+          <div style={styles.titleGroup}>
+            <Logo />
+            <div>
+              <h1 style={styles.title}>AI Repo Finder</h1>
+              <p style={styles.subtitle}>
+                Discover trending AI repositories on GitHub
+              </p>
+            </div>
+          </div>
           <div style={styles.meta}>
             {lastFetched && (
               <span style={styles.metaItem}>
@@ -29,9 +90,6 @@ export function Header({ lastFetched, fromCache }: HeaderProps) {
             )}
           </div>
         </div>
-        <p style={styles.subtitle}>
-          Discover trending AI and machine learning repositories on GitHub
-        </p>
       </div>
     </header>
   );
@@ -39,10 +97,11 @@ export function Header({ lastFetched, fromCache }: HeaderProps) {
 
 const styles: Record<string, React.CSSProperties> = {
   header: {
-    backgroundColor: 'var(--bg-secondary)',
+    background: 'linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%)',
     borderBottom: '1px solid var(--border-color)',
-    padding: '24px 0',
+    padding: '28px 0',
     marginBottom: '24px',
+    boxShadow: 'var(--shadow-sm)',
   },
   container: {
     maxWidth: 'var(--max-width)',
@@ -54,18 +113,24 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'space-between',
     flexWrap: 'wrap' as const,
-    gap: '12px',
+    gap: '16px',
   },
-  title: {
+  titleGroup: {
     display: 'flex',
     alignItems: 'center',
-    gap: '10px',
-    fontSize: '1.5rem',
-    fontWeight: 700,
+    gap: '14px',
+  },
+  title: {
+    fontSize: '1.75rem',
+    fontWeight: 800,
+    color: 'var(--text-primary)',
+    letterSpacing: '-0.02em',
+    lineHeight: 1.2,
   },
   logo: {
-    width: '28px',
-    height: '28px',
+    width: '42px',
+    height: '42px',
+    flexShrink: 0,
   },
   meta: {
     display: 'flex',
@@ -79,16 +144,17 @@ const styles: Record<string, React.CSSProperties> = {
   cacheBadge: {
     fontSize: '0.7rem',
     padding: '2px 8px',
-    backgroundColor: 'rgba(63, 185, 80, 0.15)',
+    backgroundColor: 'rgba(34, 197, 94, 0.1)',
     color: 'var(--success)',
     borderRadius: '12px',
     textTransform: 'uppercase' as const,
     letterSpacing: '0.5px',
     fontWeight: 600,
+    border: '1px solid rgba(34, 197, 94, 0.2)',
   },
   subtitle: {
-    marginTop: '6px',
-    fontSize: '0.9rem',
+    marginTop: '2px',
+    fontSize: '0.875rem',
     color: 'var(--text-secondary)',
   },
 };

@@ -4,6 +4,7 @@ import { useDebounce } from '../hooks/useDebounce';
 import { useRepos } from '../hooks/useRepos';
 import { SearchBar } from './SearchBar';
 import { SortSelector } from './SortSelector';
+import { LocationFilter } from './LocationFilter';
 import { RepoCard } from './RepoCard';
 import { Pagination } from './Pagination';
 import { LoadingSpinner } from './LoadingSpinner';
@@ -14,9 +15,11 @@ export function RepoList() {
   const [query, setQuery] = useState('');
   const [sortField, setSortField] = useState<SortField>('stars');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+  const [location, setLocation] = useState('');
   const [page, setPage] = useState(1);
 
   const debouncedQuery = useDebounce(query);
+  const debouncedLocation = useDebounce(location);
 
   const { repos, loading, error, pagination, refetch } = useRepos({
     query: debouncedQuery,
@@ -24,6 +27,7 @@ export function RepoList() {
     sortOrder,
     page,
     perPage: 20,
+    location: debouncedLocation,
   });
 
   const handleQueryChange = (value: string) => {
@@ -41,6 +45,11 @@ export function RepoList() {
     setPage(1);
   };
 
+  const handleLocationChange = (value: string) => {
+    setLocation(value);
+    setPage(1);
+  };
+
   return (
     <div style={styles.wrapper}>
       <div style={styles.controls}>
@@ -54,6 +63,10 @@ export function RepoList() {
           sortOrder={sortOrder}
           onSortFieldChange={handleSortFieldChange}
           onSortOrderChange={handleSortOrderChange}
+        />
+        <LocationFilter
+          value={location}
+          onChange={handleLocationChange}
         />
       </div>
 
